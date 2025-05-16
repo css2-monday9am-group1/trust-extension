@@ -15,15 +15,6 @@ export default [
     ]
   },
   {
-    input: 'src/service-worker/index.ts',
-    output: { file: 'dist/service-worker.js' },
-    plugins: [
-      resolve(),
-      commonjs(),
-      typescript({ tsconfig: './tsconfig.json' })
-    ]
-  },
-  {
     input: 'src/popup/index.tsx',
     output: { file: 'dist/popup.js' },
     plugins: [
@@ -32,6 +23,10 @@ export default [
       typescript({ tsconfig: './tsconfig.json' }),
       replace({ 'process.env.NODE_ENV': JSON.stringify('production'), preventAssignment: true }),
       css({ output: 'popup.css' })
-    ]
+    ],
+    onLog(level, log, handler) {
+      if (log.code === 'CIRCULAR_DEPENDENCY') return
+      handler(level, log)
+    }
   }
 ]
